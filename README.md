@@ -27,7 +27,7 @@
 ## 팀원 프로필
 <table>
 <td align="center"><a href="https://github.com/jhj04"><img src="https://github.com/jhj04/2023-2_study_flutting_masters/assets/129846546/0dcb2d38-8530-45c8-99e5-c6f39aad0c9c" width="100px;" alt=""/><br /><sub><b>정현주</b></sub></a><br /><a href="https://github.com/jhj04" title="Code">🌉</a></td>
-<td align="center"><a href="https://github.com/Maker KSY"><img src="https://github.com/jhj04/Snake_Game/assets/129846546/aa6031f5-912a-4dfc-a7d4-992e0a6fd2ac" width="100px;" alt=""/><br /><sub><b>김세현</b></sub></a><br /><a href="https://github.com/Maker KSY" title="Code">💻</a></td>
-<td align="center"><a href="https://github.com/cay_twnbay"><img src="https://github.com/jhj04/Snake_Game/assets/129846546/16f7796e-5bc2-4c34-8e7d-f93cac7bdad6" width="100px;" alt=""/><br /><sub><b>조아영</b></sub></a><br /><a href="https://github.com/cay_twnbay" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/SeHyun-Kim04"><img src="https://github.com/jhj04/Snake_Game/assets/129846546/aa6031f5-912a-4dfc-a7d4-992e0a6fd2ac" width="100px;" alt=""/><br /><sub><b>김세현</b></sub></a><br /><a href="https://github.com/SeHyun-Kim04" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/twnbay"><img src="https://github.com/jhj04/Snake_Game/assets/129846546/16f7796e-5bc2-4c34-8e7d-f93cac7bdad6" width="100px;" alt=""/><br /><sub><b>조아영</b></sub></a><br /><a href="https://github.com/twnbay" title="Code">💻</a></td>
 <td align="center"><a href="https://github.com/seenothing"><img src="https://github.com/jhj04/Snake_Game/assets/129846546/e500ff73-55e4-49ed-952d-d4e0d0c73155" width="100px;" alt=""/><br /><sub><b>니카</b></sub></a><br /><a href="https://github.com/seenothing" title="Code">💻</a></td>
 
