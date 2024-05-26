@@ -10,11 +10,12 @@ find_package(Curses REQUIRED)
 # 인클루드 디렉토리 추가
 include_directories(${CURSES_INCLUDE_DIR})
 
-
 add_executable(Kookmin_Univ_Cpp_Project main.cpp
         include/GameMap.h
         GameMap.cpp
         Snake.cpp
+        Item.cpp
+        include/Item.h
         include/Snake.h)
 
 # 실행 파일과 ncurses 라이브러리 링크
