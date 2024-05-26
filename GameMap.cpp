@@ -38,6 +38,8 @@ void GameMap::printMap() const {
                 case 2: mvprintw(y, x, "X"); break; // 코너
                 case 3: mvprintw(y, x, "H"); break; // 뱀 Head
                 case 4: mvprintw(y, x, "o"); break; // 뱀 Body
+                case 5: mvprintw(y, x, "G"); break; // !! GROWTH 아이템
+                case 6: mvprintw(y, x, "P"); break; // !!POISON 아이템
                 default: mvprintw(y, x, "E");       // 오류
             }
         }
