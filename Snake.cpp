@@ -1,5 +1,6 @@
 #include "include/Snake.h"
 #include <ncurses.h>
+#include <stdexcept>
 
 Snake::Snake(GameMap& map, int startX, int startY)
         : map(map), headX(startX), headY(startY), lastDirection(KEY_RIGHT), gameOver(false), length(3) {
@@ -12,6 +13,35 @@ Snake::Snake(GameMap& map, int startX, int startY)
     body.emplace(startX - 2, startY); // Body 2
     body.emplace(startX - 1, startY); // Body 1
     body.emplace(startX, startY); // Head
+}
+
+int Snake::getHeadX() const { // !!
+    return headX;
+}
+
+int Snake::getHeadY() const { // !!
+    return headY;
+}
+
+// !! 뱀의 길이 증가
+void Snake::grow() { 
+    length++;
+    body.push(body.back());
+}
+
+// !! 뱀의 길이 감소
+void Snake::shrink() { 
+    if (length > 3) {
+        length--;
+        int snakeDeleteX = body.front().first;
+        int snakeDeleteY = body.front().second;
+        body.pop();
+        map.setMap(snakeDeleteX, snakeDeleteY, 0);
+    }
+    else {
+        setGameOver();
+    }
+
 }
 
 void Snake::move(int direction) {
@@ -68,7 +98,7 @@ void Snake::updateSnakePosition(int newHeadX, int newHeadY) {
     body.emplace(headX, headY);
 
     // 뱀의 길이가 일정 길이 이상이면 꼬리를 줄임
-    while(body.size() > length - 1) {
+    while(body.size() >= length) {
         int snakeDeleteX = body.front().first;
         int snakeDeleteY = body.front().second;
         body.pop();
@@ -81,7 +111,8 @@ void Snake::updateSnakePosition(int newHeadX, int newHeadY) {
 }
 
 bool Snake::isValidMove(int x, int y) {
-    return map.getMap(x, y) == 0;
+    // !! 빈 공간, 아이템의 경우엔 유효
+    return ((map.getMap(x, y) == 0) || (map.getMap(x, y) == 5) || (map.getMap(x, y) == 6));
 }
 
 void Snake::setGameOver() {
