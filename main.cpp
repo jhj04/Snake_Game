@@ -12,6 +12,14 @@ int main() {
     keypad(stdscr, TRUE);
     nodelay(stdscr, TRUE);
 
+    // 색상 초기화
+    if (has_colors()) {
+        start_color();
+        init_pair(1, COLOR_GREEN, COLOR_BLACK); // GROWTH 아이템 (초록색)
+        init_pair(2, COLOR_RED, COLOR_BLACK);   // POISON 아이템 (빨간색)
+        init_pair(3, COLOR_CYAN, COLOR_BLACK); // RANDOM 아이템 (시안색)
+    }
+
     // GameMap 객체 생성 및 초기화
     GameMap map(21, 21);
     map.initMap();
@@ -51,8 +59,8 @@ int main() {
         // 만료된 아이템 및 획득된 아이템 제거
         Item::removeItem(map, items, snake, itemLifetime);
 
-        // 틱에 따라 작동
-        if (TimeCount == Tick) {
+        // 뱀의 속도 변화를 위해 Tick 대신 사용
+        if (TimeCount == Tick ) {
             snake.move(InputData);
             map.printMap();
             refresh();
@@ -81,8 +89,10 @@ int main() {
     mvprintw(map.getHeight() / 2, map.getWidth() / 2 - 4, "Game Over");
     refresh();
     usleep(5000000); // 5 sec
-
-    endwin(); // Ncurses 종료
+    
+    // Ncurses 종료
+    endwin();
 
     return 0;
 }
+
