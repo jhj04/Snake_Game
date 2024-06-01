@@ -8,6 +8,7 @@
 
 #define GROWTH 0
 #define POISON 1
+#define RANDOM 2
 
 class Item {
 private:
