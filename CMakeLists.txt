@@ -16,7 +16,9 @@ add_executable(Kookmin_Univ_Cpp_Project main.cpp
         Snake.cpp
         Item.cpp
         include/Item.h
-        include/Snake.h)
+        include/Snake.h
+        include/MissionScore.h
+        MissionScore.cpp)
 
 # 실행 파일과 ncurses 라이브러리 링크
 target_link_libraries(Kookmin_Univ_Cpp_Project ${CURSES_LIBRARIES})

@@ -1,7 +1,9 @@
 #include "include/Item.h"
+#include "include/GameMap.h"
+#include "include/Snake.h"
 #include <cstdlib>
 
-Item::Item(int x, int y, int type): itemX(x), itemY(y), itemType(type), timestamp(std::time(nullptr)) {} // 아이템 생성자
+Item::Item(int x, int y, int type) : itemX(x), itemY(y), itemType(type), timestamp(std::time(nullptr)) {} // 아이템 생성자
 
 int Item::getX() const {
     return itemX;
@@ -34,8 +36,7 @@ void Item::generateItem(GameMap& map, std::vector<Item>& items) {
             // 벡터에 새로 만들 아이템 추가
             items.emplace_back(x, y, type); 
             // printMap 작동을 위해 GROWTH일 경우 5로, POISON일 경우 6으로 인자를 넘김
-            switch (type)
-            {
+            switch (type) {
                 case GROWTH: map.setMap(x, y, 5); break;
                 case POISON: map.setMap(x, y, 6); break;
                 case RANDOM: map.setMap(x, y, 8); break;
@@ -65,13 +66,21 @@ void Item::itemEffect(GameMap& map, Snake& snake, std::vector<Item>& items) {
         // 둘의 위치가 동일할 경우 아이템 효과 적용
         if (it->getX() == headX && it->getY() == headY) {  
             switch (it->getType()) {
-                case GROWTH: snake.grow(); break;
-                case POISON: snake.shrink(); break;
+                case GROWTH:
+                    snake.grow();
+                    map.incrementGrowth();
+                    break;
+                case POISON:
+                    snake.shrink();
+                    map.incrementPoison();
+                    break;
                 case RANDOM: // 랜덤으로 길이가 증가하거나 감소
                     if (rand() % 2 == 0) {
                         snake.grow();
+                        map.incrementGrowth();
                     } else {
                         snake.shrink();
+                        map.incrementPoison();
                     }
                     break;
             }
@@ -98,6 +107,3 @@ void Item::removeItem(GameMap& map, std::vector<Item>& items, const Snake& snake
         }
     }
 }
-
-
-

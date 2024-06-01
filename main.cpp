@@ -1,6 +1,7 @@
 #include "include/GameMap.h"
 #include "include/Snake.h"
 #include "include/Item.h"
+#include "include/MissionScore.h"
 #include <ncurses.h>
 #include <unistd.h>
 
@@ -21,12 +22,17 @@ int main() {
     }
 
     // GameMap 객체 생성 및 초기화
-    GameMap map(21, 21);
+    int stage = 1;
+    GameMap map(51, 21, stage);
     map.initMap();
 
     // Snake 객체 생성 및 초기화
     Snake snake(map, 10, 10);
     map.printMap();
+
+    // 미션스코어 객체 생성
+    MissionScore missionScore(int stage);
+    // missionScore.initMissions();
 
     // 아이템 벡터 초기화
     std::vector<Item> items;
@@ -63,6 +69,8 @@ int main() {
         if (TimeCount == Tick ) {
             snake.move(InputData);
             map.printMap();
+            map.displayState();
+            map.displayMissions();
             refresh();
             TimeCount = 0;
         }
@@ -80,6 +88,8 @@ int main() {
         refresh();
         usleep(500000); // 0.5 sec
         map.printMap();
+        map.displayState();
+        map.displayMissions();
         refresh();
         usleep(500000); // 0.5 sec
     }
@@ -95,4 +105,3 @@ int main() {
 
     return 0;
 }
-

@@ -1,11 +1,15 @@
 #include "include/GameMap.h"
+#include "include/Item.h"
+#include <ncurses.h>
 
-GameMap::GameMap(int width, int height) : width(width), height(height) {
+GameMap::GameMap(int width, int height, int stage) 
+: width(width), height(height), stage(stage){
     mapArray = new int*[height];
     for (int i = 0; i < height; i++) {
         mapArray[i] = new int[width];
     }
-    initMap();
+    missionScore.MissionList(stage);
+    initMap(); // 스테이지 초기화
 }
 
 GameMap::~GameMap() {
@@ -27,6 +31,36 @@ void GameMap::initMap() {
             }
         }
     }
+
+        switch (stage) {
+        case 1:
+            for (int y = 5; y < 7; y++) {
+                mapArray[y][25] = 1; // 장애물
+            }
+            break;
+        case 2:
+            for (int y = 9; y < 11; y++) {
+                mapArray[y][25] = 1; // 장애물
+            }
+            break;
+        case 3:
+            for (int y = 12; y < 15; y++) {
+                mapArray[y][25] = 1; // 장애물
+            }
+            break;
+        case 4:
+            for (int y = 16; y < 19; y++) {
+                mapArray[y][25] = 1; // 장애물
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void GameMap::nextStage() {
+    stage++;
+    initMap(); // 새로운 스테이지 초기화
 }
 
 void GameMap::printMap() const {
@@ -60,4 +94,78 @@ int GameMap::getMap(int x, int y) const {
 
 void GameMap::setMap(int x, int y, int item) {
     mapArray[y][x] = item;
+}
+
+void GameMap::mGrowth() {
+    missionScore.setMissionGrowth(missionScore.getMGrowth());
+
+}
+
+void GameMap::incrementGrowth() {
+    missionScore.setMissionGrowth(missionScore.getMissionGrowth() + 1);
+
+}
+
+void GameMap::incrementPoison() {
+    missionScore.setMissionPoison(missionScore.getMissionPoison() + 1);
+}
+
+void GameMap::incrementLength(int itemType) {
+    switch (itemType){
+    case 5:
+        missionScore.setMissionLength(missionScore.getMissionLength() + 1);
+        break;
+    case 6:
+        missionScore.setMissionLength(missionScore.getMissionLength() - 1);
+        break;
+    default:
+        break;
+    }
+}
+void GameMap::displayMissions() const {
+    int yOffset = 0;
+    int xOffset = width + 4;
+    int missionMapWidth = 20;
+    int missionMapHeight = 6;
+
+    for (int y = 5; y <= 5 + missionMapHeight; y++) {
+        for (int x = xOffset; x <= 5 + missionMapWidth; x++ ){
+            if (y == 5 + yOffset || y == 5 + missionMapHeight) {
+                mvprintw(y, x, "-");
+            } else if (x == xOffset || x == 5 + missionMapWidth) {
+                mvprintw(y, x, "|");
+            } else {
+                mvprintw(y, x, " ");
+            }
+        }
+    }
+
+    mvprintw(3 + yOffset, xOffset + 8, "Missions");
+    mvprintw(4 + yOffset, xOffset + 8, "Stage : %d", stage);
+    mvprintw(5 + yOffset, xOffset + 1, " " );
+    mvprintw(6 + yOffset, xOffset + 1, " Growth: %d", missionScore.getMGrowth());
+    mvprintw(7 + yOffset, xOffset + 1, " Poison: %d", missionScore.getMPoison());
+    mvprintw(8 + yOffset, xOffset + 1, " Length: %d", missionScore.getMLength());
+}
+
+void GameMap::displayState() const {
+    int y0ffset = 9;
+    int xOffset = width + 4;
+    int missionMapWidth = 20;
+    int missionMapHeight = 6;
+
+    for (int y = 9 ; y <= 9 + missionMapHeight ; y++) {
+        for (int x = xOffset; x <= xOffset + missionMapWidth; x++ ){
+            if (y == 9 || y == 9 + missionMapHeight) {
+                mvprintw(y, x, "-");
+            } else if (x == xOffset || x == xOffset + missionMapWidth) {
+                mvprintw(y, x, "|");
+            } else {
+                mvprintw(y, x, " ");
+            }
+        }
+    }
+    mvprintw(11, xOffset+1, " Growth: %d", missionScore.getMissionGrowth());
+    mvprintw(12, xOffset+1, " Poison: %d", missionScore.getMissionPoison());
+    mvprintw(13, xOffset+1, " Length: %d", missionScore.getMissionLength());
 }
