@@ -9,6 +9,7 @@ private:
     int width;
     int height;
     int **mapArray;
+    int* gates;
     MissionScore missionScore;
 
 public:
@@ -17,6 +18,8 @@ public:
 
     void initMap();
     void printMap() const;
+    void createGate();
+    int* getGates() const;
     int getWidth() const;
     int getHeight() const;
     int getMap(int x, int y) const;

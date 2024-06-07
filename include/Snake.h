@@ -15,7 +15,9 @@ private:
     std::queue<std::pair<int, int>> body;  // 뱀 몸통의 위치를 저장하는 큐
     void updateSnakePosition(int newHeadX, int newHeadY);  // 뱀의 위치를 갱신하는 함수
     bool isValidMove(int x, int y);  // 이동이 유효한지 확인하는 함수
+    bool isGate(int x, int y);
     void setGameOver();   // 게임 오버 처리
+    int* outGate(int ex, int ey);
 public:
     Snake(GameMap& map, int startX, int startY); // 생성자
     int getHeadX() const; // !! 아이템 구현을 위해 getter 추가
