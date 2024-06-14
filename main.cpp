@@ -33,6 +33,7 @@ int main() {
     while(true){
         press = getch();
         if(press == 10){
+            clear();
             break;
         }
     }
@@ -87,9 +88,6 @@ int main() {
             refresh();
             TimeCount = 0;
         }
-
-        // map.nextStage();
-
         // 틱 제어를 위한 변수
         TimeCount++;
 
@@ -97,6 +95,7 @@ int main() {
         usleep(1000);
     }
     
+    map.nextStage();
 
     // Game Over 애니메이션
     for (int i = 0; i < 5; i++) {

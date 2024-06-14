@@ -10,6 +10,7 @@ private:
     int missionGrowth;
     int missionPoison;
     int missionLength;
+    int missionGate;
 
 public:
     MissionScore();
@@ -31,6 +32,8 @@ public:
     void setMissionPoison(int valuem);
     int getMissionLength() const;
     void setMissionLength(int valuem);
+    int getMissionGates() const;
+    void setMissionGates(int valuem);
 
 };
 

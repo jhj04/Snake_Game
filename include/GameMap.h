@@ -45,8 +45,14 @@ public:
 
     void nextStage(); // 다음 스테이지로 이동
     bool Success = false;
-    int currentStage;
+    bool gsuccess = false;
+    bool psuccess = false;
+    bool lsuccess = false;
+    bool gatesuccess = false;
 
+    int missionGrowth;
+    int missionLength;
+    int missionPoison;
 
 };
 

@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <time.h> 
 #include <ncurses.h>
-#include <locale.h>
 
 
 GameMap::GameMap(int width, int height, int stage) : width(width), height(height), stage(stage){
@@ -50,13 +49,23 @@ void GameMap::initMap() {
                 mapArray[y][24] = 1; // 장애물
             }
             for (int y = 5; y < 16; y++) {
-                mapArray[y][26] = 1; // 장애물
+                mapArray[y][25] = 1; // 장애물
             }
             break;
         case 2:
-            for (int y = 9; y < 11; y++) {
+            for (int y = 8; y < 16; y++) {
+                mapArray[y][24] = 1; // 장애물
+            }
+            for (int y = 8; y < 16; y++) {
                 mapArray[y][25] = 1; // 장애물
             }
+            for (int x = 8; x < 16; x++) {
+                mapArray[24][x] = 1; // 장애물
+            }
+            for (int x = 8; x < 16; x++) {
+                mapArray[25][x] = 1; // 장애물
+            }
+
             break;
         case 3:
             for (int y = 12; y < 15; y++) {
@@ -87,8 +96,6 @@ void GameMap::TitleMap() const {
 };
 
 void GameMap::GameOverMap() const {
-
-    setlocale(LC_CTYPE, "ko_KR.utf-8");
                                                   
     mvwprintw(stdscr, 0, width/2-2, " _____             _               ");
     mvwprintw(stdscr, 1, width/2-2, "|     |___ ___ ___| |_ ___ ___ ___ ");
@@ -108,19 +115,41 @@ void GameMap::GameOverMap() const {
 
 void GameMap::WaitingMap() const {
                                                   
-    mvwprintw(stdscr, height/2, width/2-2, "stage %d", stage);
+    mvprintw(height/2, width/2-2, "stage %d", stage);
+
+    mvprintw(height/2+2, width/2-2, "Press Enterkey");
+
 
     refresh();
                                             
 };
 
 void GameMap::nextStage() {
-    if (stage <= 4 &&  missionScore.getNowGrowth() == missionScore.getMissionGrowth()
+    if (stage <= 4
+    && missionScore.getNowGrowth() == missionScore.getMissionGrowth()
     && missionScore.getNowLength() == missionScore.getMissionLength() 
-    && missionScore.getNowPoison()== missionScore.getMissionPoison()){
+    && missionScore.getNowPoison()== missionScore.getMissionPoison()
+    // && missionScore.getMissionGates() == (int)getGates()
+    ){
+        gsuccess = true;
+        lsuccess = true;
+        psuccess = true;
         Success = true;
+        gatesuccess = true;
         stage++;
+
+        WaitingMap();
+
+        int press;
+        while(true){
+            press = getch();
+            if(press == 10){
+                clear();
+                break;
+            }
+        }
     }
+    clear();
     initMap(); // 새로운 스테이지 초기화
 }
 
@@ -252,13 +281,13 @@ void GameMap::displayMissions() const {
         }
     }
 
-    mvprintw(3, xOffset + 8, "Missions");
-    mvprintw(4, xOffset + 8, "Stage : %d", stage);
-    mvprintw(5, xOffset + 1, " " );
-    mvprintw(6, xOffset + 1, " Growth: %d", missionScore.getMissionGrowth());
-    mvprintw(7, xOffset + 1, " Poison: %d", missionScore.getMissionPoison());
-    mvprintw(8, xOffset + 1, " Length: %d", missionScore.getMissionLength());
-        // mvprintw(13, xOffset+1, " Length: %d", missionScore.getMissionGate());
+    mvprintw(2, xOffset + 8, "Missions");
+    mvprintw(3, xOffset + 8, "Stage : %d", stage);
+    mvprintw(4, xOffset + 1, " " );
+    mvprintw(5, xOffset + 1, " Growth: %d", missionScore.getMissionGrowth());
+    mvprintw(6, xOffset + 1, " Poison: %d", missionScore.getMissionPoison());
+    mvprintw(7, xOffset + 1, " Length: %d", missionScore.getMissionLength());
+    mvprintw(8, xOffset+1, " Gates: %d", missionScore.getMissionGates());
 
 }
 
@@ -278,10 +307,11 @@ void GameMap::displayState() const {
             }
         }
     }
-    mvprintw(11, xOffset+5, "ScoreBoard");
-    mvprintw(12, xOffset+1, " Growth: %d (%d)", missionScore.getNowGrowth(), 0);
-    mvprintw(13, xOffset+1, " Poison: %d (%d)", missionScore.getNowPoison(), 0);
-    mvprintw(14, xOffset+1, " Length: %d (%d)", missionScore.getNowLength(), 0);
-    // mvprintw(13, xOffset+1, " Length: %d", missionScore.getNowGate(), 0);
+    mvprintw(10, xOffset+5, "ScoreBoard");
+    mvprintw(11, xOffset+1, " Growth: %d (%s)", missionScore.getNowGrowth(), gsuccess ? "O" :"X");
+    mvprintw(12, xOffset+1, " Poison: %d (%s)", missionScore.getNowPoison(), psuccess ? "O" :"X");
+    mvprintw(13, xOffset+1, " Length: %d (%s)", missionScore.getNowLength(), lsuccess ? "O" :"X");
+    // mvprintw(14, xOffset+1, " Gates: %p (%s)", (void*)&gates, gatesuccess ? "O" :"X");
+    mvprintw(14, xOffset+1, " Gates: %d (%s)", missionScore.getNowLength(), "O");
 
 }

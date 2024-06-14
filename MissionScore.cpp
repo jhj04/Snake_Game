@@ -13,21 +13,25 @@ void MissionScore::MissionList(int stage){
             missionLength = 4;
             missionGrowth = 1;
             missionPoison = 0;
+            missionGate = 1;
             break;
         case 2:
             missionLength = 4;
             missionGrowth = 1;
             missionPoison = 0;
+            missionGate = 2;
             break;
         case 3:
             missionLength = 4;
             missionGrowth = 1;
             missionPoison = 0;
+            missionGate = 3;
             break;
         case 4:
             missionLength = 4;
             missionGrowth = 1;
             missionPoison = 0;
+            missionGate = 4;
             break;
         default:
             break;
@@ -82,4 +86,12 @@ int MissionScore::getMissionLength() const {
 
 void MissionScore::setMissionLength(int valuem) {
     missionLength = valuem;
+}
+
+int MissionScore::getMissionGates() const {
+    return missionGate;
+}
+
+void MissionScore::setMissionGates(int valuem) {
+    missionGate = valuem;
 }
