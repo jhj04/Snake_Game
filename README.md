@@ -7,7 +7,7 @@
 <div align=center>
   
 ## 팀명
-### 💻carriage_return⌨️
+### 💻 carriage_return ⌨️
 
 <br>
 <div align=center>
