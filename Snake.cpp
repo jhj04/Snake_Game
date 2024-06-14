@@ -1,5 +1,6 @@
 #include "include/Snake.h"
 #include <ncurses.h>
+#include <stdexcept>
 
 Snake::Snake(GameMap& map, int startX, int startY)
         : map(map), headX(startX), headY(startY), lastDirection(KEY_RIGHT), gameOver(false), length(3) {
@@ -14,27 +15,78 @@ Snake::Snake(GameMap& map, int startX, int startY)
     body.emplace(startX, startY); // Head
 }
 
+int Snake::getHeadX() const { // !!
+    return headX;
+}
+
+int Snake::getHeadY() const { // !!
+    return headY;
+}
+
+// !! 뱀의 길이 증가
+void Snake::grow() { 
+    length++;
+    body.push(body.back());
+}
+
+// !! 뱀의 길이 감소
+void Snake::shrink() { 
+    if (length > 3) {
+        length--;
+        int snakeDeleteX = body.front().first;
+        int snakeDeleteY = body.front().second;
+        body.pop();
+        map.setMap(snakeDeleteX, snakeDeleteY, 0);
+    }
+    else {
+        setGameOver();
+    }
+
+}
+
+// 뱀의 머리 기준 3*3칸 확인
+bool Snake::isWithinRange(int x, int y) const {
+    int dx = abs(headX - x);
+    int dy = abs(headY - y);
+    return dx <= 3 && dy <= 3 && dx + dy <= 3; 
+}
+
 void Snake::move(int direction) {
     int newHeadX = headX;
     int newHeadY = headY;
 
-    // Head 위치 갱신
+    // Update head position based on the current direction
     updateHeadPosition(newHeadX, newHeadY, direction);
 
-    // 유효한 움직임인지 확인
-    if (!isValidMove(newHeadX, newHeadY)) {
+    // Check if the new position is a gate
+    if (isGate(newHeadX, newHeadY)) {
+        int* outGateCoor = outGate(newHeadX, newHeadY);
+        direction = outGateCoor[0];
+        newHeadX = outGateCoor[1];
+        newHeadY = outGateCoor[2];
+
+        // Move one step in the new direction
+        updateHeadPosition(newHeadX, newHeadY, direction);
+
+        lastDirection = direction;
+
+    }
+
+    // Check if the new head position is a valid move
+    else if (!isValidMove(newHeadX, newHeadY)) {
         setGameOver();
         return;
     }
 
-    // 뱀의 위치 갱신
+    // Update the snake's position
     updateSnakePosition(newHeadX, newHeadY);
+    
+    if (direction != -1) {
+        lastDirection = direction;
+    }
 }
 
 void Snake::updateHeadPosition(int& newHeadX, int& newHeadY, int direction) {
-    newHeadX = headX;
-    newHeadY = headY;
-
     if(direction == -1) {
         direction = lastDirection;
     }
@@ -68,11 +120,14 @@ void Snake::updateSnakePosition(int newHeadX, int newHeadY) {
     body.emplace(headX, headY);
 
     // 뱀의 길이가 일정 길이 이상이면 꼬리를 줄임
-    while(body.size() > length - 1) {
+    while(body.size() >= length) {
         int snakeDeleteX = body.front().first;
         int snakeDeleteY = body.front().second;
         body.pop();
-        map.setMap(snakeDeleteX, snakeDeleteY, 0);
+        
+        if (!isGate(snakeDeleteX, snakeDeleteY)) {
+            map.setMap(snakeDeleteX, snakeDeleteY, 0); // Clear the tail position on the map
+        }
     }
 
     // 헤드 위치 갱신
@@ -80,8 +135,45 @@ void Snake::updateSnakePosition(int newHeadX, int newHeadY) {
     headY = newHeadY;
 }
 
+int* Snake::outGate(int ex, int ey) {
+    static int out[3];
+    int* gates = map.getGates();
+    int gate1X = gates[0];
+    int gate1Y = gates[1];
+    int gate2X = gates[2];
+    int gate2Y = gates[3];
+
+    if (ex == gate1X && ey == gate1Y) {
+        out[1] = gate2X;
+        out[2] = gate2Y;
+    } 
+    else if (ex == gate2X && ey == gate2Y) {
+        out[1] = gate1X;
+        out[2] = gate1Y;
+    }
+    else {
+        // should never reach this point
+        out[1] = ex; 
+        out[2] = ey;
+    }
+    
+    if (out[1] == 0) out[0] = KEY_RIGHT;
+    else if (out[2] == 0) out[0] = KEY_DOWN;
+    else if (out[1] == map.getWidth() - 1) out[0] = KEY_LEFT;
+    else if (out[2] == map.getHeight() - 1) out[0] = KEY_UP;
+    else out[0] = lastDirection; // Maintain last direction if not on edge
+
+    return out;
+}
+
 bool Snake::isValidMove(int x, int y) {
-    return map.getMap(x, y) == 0;
+    // !! 빈 공간, 아이템의 경우엔 유효
+    int mapValue = map.getMap(x, y);
+    return mapValue == 0 || mapValue >= 5;
+}
+
+bool Snake::isGate(int x, int y) {
+    return map.getMap(x, y) == 7;
 }
 
 void Snake::setGameOver() {
@@ -91,3 +183,5 @@ void Snake::setGameOver() {
 bool Snake::getGameOver() const {
     return gameOver;
 }
+
+std::queue<std::pair<int, int>> body;

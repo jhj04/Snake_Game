@@ -1,23 +1,52 @@
-#ifndef GAME_MAP_H
-#define GAME_MAP_H
+#ifndef GAMEMAP_H
+#define GAMEMAP_H
 
-#include <ncurses.h>
+#include "MissionScore.h"
 
 class GameMap {
+
 private:
-    int width;  // 맵의 너비
-    int height; // 맵의 높이
-    int** mapArray; // 맵 배열
+    int width;
+    int height;
+    int **mapArray;
+    int* gates;
+    MissionScore missionScore;
 
 public:
-    GameMap(int width, int height); // 생성자
-    ~GameMap(); // 소멸자
-    void initMap(); // 맵 초기화
-    void printMap() const;  // 맵 출력
-    [[nodiscard]] int getWidth() const;   // 너비 반환
-    [[nodiscard]] int getHeight() const;  // 높이 반환
-    [[nodiscard]] int getMap(int x, int y) const; // 맵의 특정 좌표 값 반환
-    void setMap(int x, int y, int item);    // 맵의 특정 좌표 값 설정
+    GameMap(int width, int height, int stage);
+    ~GameMap();
+
+    void initMap();
+    void printMap() const;
+    void createGate();
+    int* getGates() const;
+    int getWidth() const;
+    int getHeight() const;
+    int getMap(int x, int y) const;
+    void setMap(int x, int y, int item);
+    void displayState() const;
+    void displayMissions() const;
+
+    void incrementGrowth();
+    void incrementPoison();
+    void incrementLength(int itemType);
+
+    void mGrowth();
+
+    const MissionScore& getMissionScore() const {
+        return missionScore;
+    }
+
+    int stage;
+
+    void nextStage(); // 다음 스테이지로 이동
+    int currentStage;
+
+    int MGrowth;
+    int MLength;
+    int MPoison;
+
+
 };
 
-#endif
+#endif 
