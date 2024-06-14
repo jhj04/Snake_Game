@@ -69,10 +69,12 @@ void Item::itemEffect(GameMap& map, Snake& snake, std::vector<Item>& items) {
                 case GROWTH:
                     snake.grow();
                     map.incrementGrowth();
+                    map.incrementLength(5);
                     break;
                 case POISON:
                     snake.shrink();
                     map.incrementPoison();
+                    map.incrementLength(6);
                     break;
                 case RANDOM: // 랜덤으로 길이가 증가하거나 감소
                     if (rand() % 2 == 0) {

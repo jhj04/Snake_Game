@@ -4,9 +4,11 @@
 #include "include/MissionScore.h"
 #include <ncurses.h>
 #include <unistd.h>
+#include <locale.h>
 
 int main() {
     // Ncurses 초기화
+    setlocale(LC_CTYPE, "ko_KR.utf-8");
     initscr();
     noecho();
     curs_set(0);
@@ -24,6 +26,18 @@ int main() {
     // GameMap 객체 생성 및 초기화
     int stage = 1;
     GameMap map(51, 21, stage);
+
+    map.TitleMap();
+
+    int press;
+    while(true){
+        press = getch();
+        if(press == 10){
+            break;
+        }
+    }
+
+    // Map
     map.initMap();
 
     // Snake 객체 생성 및 초기화
@@ -32,7 +46,6 @@ int main() {
 
     // 미션스코어 객체 생성
     MissionScore missionScore(int stage);
-    // missionScore.initMissions();
 
     // 아이템 벡터 초기화
     std::vector<Item> items;
@@ -75,12 +88,15 @@ int main() {
             TimeCount = 0;
         }
 
+        // map.nextStage();
+
         // 틱 제어를 위한 변수
         TimeCount++;
 
         // 1ms 딜레이
         usleep(1000);
     }
+    
 
     // Game Over 애니메이션
     for (int i = 0; i < 5; i++) {
@@ -99,6 +115,17 @@ int main() {
     mvprintw(map.getHeight() / 2, map.getWidth() / 2 - 4, "Game Over");
     refresh();
     usleep(5000000); // 5 sec
+    clear();
+
+
+    map.GameOverMap();
+
+    while(true){
+        press = getch();
+        if(press == 10){
+            break;
+        }
+    }
     
     // Ncurses 종료
     endwin();

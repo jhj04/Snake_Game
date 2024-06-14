@@ -16,6 +16,10 @@ public:
     GameMap(int width, int height, int stage);
     ~GameMap();
 
+    void TitleMap() const;
+    void GameOverMap() const;
+    void WaitingMap() const;
+
     void initMap();
     void printMap() const;
     void createGate();
@@ -40,11 +44,8 @@ public:
     int stage;
 
     void nextStage(); // 다음 스테이지로 이동
+    bool Success = false;
     int currentStage;
-
-    int MGrowth;
-    int MLength;
-    int MPoison;
 
 
 };

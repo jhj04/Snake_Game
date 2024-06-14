@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <time.h> 
 #include <ncurses.h>
+#include <locale.h>
+
 
 GameMap::GameMap(int width, int height, int stage) : width(width), height(height), stage(stage){
     mapArray = new int*[height];
@@ -42,10 +44,13 @@ void GameMap::initMap() {
         }
     }
 
-        switch (stage) {
+    switch (stage) {
         case 1:
-            for (int y = 5; y < 7; y++) {
-                mapArray[y][25] = 1; // 장애물
+            for (int y = 5; y < 16; y++) {
+                mapArray[y][24] = 1; // 장애물
+            }
+            for (int y = 5; y < 16; y++) {
+                mapArray[y][26] = 1; // 장애물
             }
             break;
         case 2:
@@ -68,8 +73,54 @@ void GameMap::initMap() {
     }
 }
 
+void GameMap::TitleMap() const {
+                
+    mvwprintw(stdscr, 0, width/2, " _____         _          _____   ");
+    mvwprintw(stdscr, 1, width/2, "|   __|___ ___| |_ ___   |   __|___ _____ ___ ");
+    mvwprintw(stdscr, 2, width/2, "|__   |   | .'| '_| -_|  |  |  | .'|     | -_|");
+    mvwprintw(stdscr, 3, width/2, "|_____|_|_|__,|_,_|___|  |_____|__,|_|_|_|___|");
+
+    mvwprintw(stdscr, 7, width/2+6, "<Press Enterkey to Start Game>");
+
+    refresh();
+                                            
+};
+
+void GameMap::GameOverMap() const {
+
+    setlocale(LC_CTYPE, "ko_KR.utf-8");
+                                                  
+    mvwprintw(stdscr, 0, width/2-2, " _____             _               ");
+    mvwprintw(stdscr, 1, width/2-2, "|     |___ ___ ___| |_ ___ ___ ___ ");
+    mvwprintw(stdscr, 2, width/2-2, "|   --|  _| -_| .'|  _| . |  _|_ -|");
+    mvwprintw(stdscr, 3, width/2-2, "|_____|_| |___|__,|_| |___|_| |___|");
+
+                                   
+
+    mvprintw(7, width/2+3, "JeongHyunjoo[jhj04]");
+    mvprintw(8, width/2+3, "KimSehyun[SeHyun-Kim04]");
+    mvprintw(9, width/2+3, "Choahyoung[twnbay]");
+    mvprintw(10, width/2+3, "CzorapinskaWeronika[seennothing]");
+
+    refresh();
+                                            
+};
+
+void GameMap::WaitingMap() const {
+                                                  
+    mvwprintw(stdscr, height/2, width/2-2, "stage %d", stage);
+
+    refresh();
+                                            
+};
+
 void GameMap::nextStage() {
-    stage++;
+    if (stage <= 4 &&  missionScore.getNowGrowth() == missionScore.getMissionGrowth()
+    && missionScore.getNowLength() == missionScore.getMissionLength() 
+    && missionScore.getNowPoison()== missionScore.getMissionPoison()){
+        Success = true;
+        stage++;
+    }
     initMap(); // 새로운 스테이지 초기화
 }
 
@@ -157,40 +208,41 @@ void GameMap::setMap(int x, int y, int item) {
 }
 
 void GameMap::mGrowth() {
-    missionScore.setMissionGrowth(missionScore.getMGrowth());
+    missionScore.setNowGrowth(missionScore.getNowGrowth());
 
 }
 
 void GameMap::incrementGrowth() {
-    missionScore.setMissionGrowth(missionScore.getMissionGrowth() + 1);
+    missionScore.setNowGrowth(missionScore.getNowGrowth() + 1);
 
 }
 
 void GameMap::incrementPoison() {
-    missionScore.setMissionPoison(missionScore.getMissionPoison() + 1);
+    missionScore.setNowPoison(missionScore.getNowPoison() + 1);
 }
 
 void GameMap::incrementLength(int itemType) {
+
     switch (itemType){
     case 5:
-        missionScore.setMissionLength(missionScore.getMissionLength() + 1);
+        missionScore.setNowLength(missionScore.getNowLength() + 1);
         break;
     case 6:
-        missionScore.setMissionLength(missionScore.getMissionLength() - 1);
+        missionScore.setNowLength(missionScore.getNowLength() - 1);
         break;
+        
     default:
         break;
     }
 }
 void GameMap::displayMissions() const {
-    int yOffset = 0;
     int xOffset = width + 4;
     int missionMapWidth = 20;
     int missionMapHeight = 6;
 
     for (int y = 5; y <= 5 + missionMapHeight; y++) {
         for (int x = xOffset; x <= 5 + missionMapWidth; x++ ){
-            if (y == 5 + yOffset || y == 5 + missionMapHeight) {
+            if (y == 5 || y == 5 + missionMapHeight) {
                 mvprintw(y, x, "-");
             } else if (x == xOffset || x == 5 + missionMapWidth) {
                 mvprintw(y, x, "|");
@@ -200,16 +252,17 @@ void GameMap::displayMissions() const {
         }
     }
 
-    mvprintw(3 + yOffset, xOffset + 8, "Missions");
-    mvprintw(4 + yOffset, xOffset + 8, "Stage : %d", stage);
-    mvprintw(5 + yOffset, xOffset + 1, " " );
-    mvprintw(6 + yOffset, xOffset + 1, " Growth: %d", missionScore.getMGrowth());
-    mvprintw(7 + yOffset, xOffset + 1, " Poison: %d", missionScore.getMPoison());
-    mvprintw(8 + yOffset, xOffset + 1, " Length: %d", missionScore.getMLength());
+    mvprintw(3, xOffset + 8, "Missions");
+    mvprintw(4, xOffset + 8, "Stage : %d", stage);
+    mvprintw(5, xOffset + 1, " " );
+    mvprintw(6, xOffset + 1, " Growth: %d", missionScore.getMissionGrowth());
+    mvprintw(7, xOffset + 1, " Poison: %d", missionScore.getMissionPoison());
+    mvprintw(8, xOffset + 1, " Length: %d", missionScore.getMissionLength());
+        // mvprintw(13, xOffset+1, " Length: %d", missionScore.getMissionGate());
+
 }
 
 void GameMap::displayState() const {
-    int y0ffset = 9;
     int xOffset = width + 4;
     int missionMapWidth = 20;
     int missionMapHeight = 6;
@@ -225,7 +278,10 @@ void GameMap::displayState() const {
             }
         }
     }
-    mvprintw(11, xOffset+1, " Growth: %d", missionScore.getMissionGrowth());
-    mvprintw(12, xOffset+1, " Poison: %d", missionScore.getMissionPoison());
-    mvprintw(13, xOffset+1, " Length: %d", missionScore.getMissionLength());
+    mvprintw(11, xOffset+5, "ScoreBoard");
+    mvprintw(12, xOffset+1, " Growth: %d (%d)", missionScore.getNowGrowth(), 0);
+    mvprintw(13, xOffset+1, " Poison: %d (%d)", missionScore.getNowPoison(), 0);
+    mvprintw(14, xOffset+1, " Length: %d (%d)", missionScore.getNowLength(), 0);
+    // mvprintw(13, xOffset+1, " Length: %d", missionScore.getNowGate(), 0);
+
 }
