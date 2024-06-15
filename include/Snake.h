@@ -27,6 +27,8 @@ public:
     void move(int direction);   // 방향키 입력에 따라 뱀을 움직이는 함수
     [[nodiscard]] bool getGameOver() const;   // 게임 오버 여부 반환
     void updateHeadPosition(int& newHeadX, int& newHeadY, int direction); // Head 위치를 갱신하는 함수
+    // 뱀의 머리 근처를 확인하는 함수 (뱀의 머리 기준 3*3칸에는 아이템x)
+    bool isWithinRange(int x, int y, Snake& snake) const;
 };
 
 #endif

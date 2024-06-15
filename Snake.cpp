@@ -177,4 +177,10 @@ bool Snake::getGameOver() const {
     return gameOver;
 }
 
+// 뱀의 머리 기준 3*3칸 확인
+bool Snake::isWithinRange(int x, int y, Snake& snake) const {
+    int dx = abs(headX - x);
+    int dy = abs(headY - y);
+    return dx <= 3 && dy <= 3 && dx + dy <= 3;
+}
 std::queue<std::pair<int, int>> body;

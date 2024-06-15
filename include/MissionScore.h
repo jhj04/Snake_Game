@@ -6,6 +6,7 @@ private:
     int nowGrowth;
     int nowPoison;
     int nowLength;
+    int nowGate;
 
     int missionGrowth;
     int missionPoison;
@@ -23,17 +24,17 @@ public:
     int getNowLength() const;
     void setNowLength(int value);
     
-    void MissionList(int stage);
+    void MissionList(int* stage);
 
     // 설정한 미션 값
     int getMissionGrowth() const;
-    void setMissionGrowth(int valuem);
+    void setMissionGrowth(int growth_m);
     int getMissionPoison() const;
-    void setMissionPoison(int valuem);
+    void setMissionPoison(int poison_m);
     int getMissionLength() const;
-    void setMissionLength(int valuem);
+    void setMissionLength(int length_m);
     int getMissionGates() const;
-    void setMissionGates(int valuem);
+    void setMissionGates(int gate_m);
 
 };
 

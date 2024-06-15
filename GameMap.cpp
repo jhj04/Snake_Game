@@ -1,12 +1,13 @@
 #include "include/GameMap.h"
 #include "include/Item.h"
+#include "include/MissionScore.h"
 #include <iostream>
 #include <stdlib.h>
 #include <time.h> 
 #include <ncurses.h>
 
 
-GameMap::GameMap(int width, int height, int stage) : width(width), height(height), stage(stage){
+GameMap::GameMap(int width, int height, int* stage) : width(width), height(height), stage(stage), missionScore() {
     mapArray = new int*[height];
     for (int i = 0; i < height; i++) {
         mapArray[i] = new int[width];
@@ -15,6 +16,8 @@ GameMap::GameMap(int width, int height, int stage) : width(width), height(height
     gates = new int[4]; 
     initMap(); // 스테이지 초기화
 }
+
+
 
 GameMap::~GameMap() {
     for (int i = 0; i < height; i++) {
@@ -43,7 +46,7 @@ void GameMap::initMap() {
         }
     }
 
-    switch (stage) {
+    switch (*stage) {
         case 1:
             for (int y = 5; y < 16; y++) {
                 mapArray[y][24] = 1; // 장애물
@@ -53,30 +56,57 @@ void GameMap::initMap() {
             }
             break;
         case 2:
-            for (int y = 8; y < 16; y++) {
+            for (int y = 5; y < 15; y++) {
                 mapArray[y][24] = 1; // 장애물
             }
-            for (int y = 8; y < 16; y++) {
+            for (int y = 5; y < 15; y++) {
                 mapArray[y][25] = 1; // 장애물
             }
-            for (int x = 8; x < 16; x++) {
-                mapArray[24][x] = 1; // 장애물
+            for (int x = 10; x < 38; x++) {
+                mapArray[5][x] = 1; // 장애물
             }
-            for (int x = 8; x < 16; x++) {
-                mapArray[25][x] = 1; // 장애물
+            for (int x = 10; x < 38; x++) {
+                mapArray[15][x] = 1; // 장애물
             }
-
             break;
         case 3:
-            for (int y = 12; y < 15; y++) {
-                mapArray[y][25] = 1; // 장애물
+            for (int y = 3; y < 6; y++) {
+                mapArray[y][10] = 1; // 장애물
+            }
+            for (int y = 9; y < 12; y++) {
+                mapArray[y][20] = 1; // 장애물
+            }
+            for (int y = 16; y < 19; y++) {
+                mapArray[y][30] = 1; // 장애물
             }
             break;
         case 4:
-            for (int y = 16; y < 19; y++) {
+            for (int y = 13; y < 16; y++) {
+                mapArray[y][24] = 1; // 장애물
+            }
+            for (int y = 13; y < 16; y++) {
                 mapArray[y][25] = 1; // 장애물
             }
+            for (int y = 3; y < 6; y++) {
+                mapArray[y][24] = 1; // 장애물
+            }
+            for (int y = 3; y < 6; y++) {
+                mapArray[y][25] = 1; // 장애물
+            }
+            for (int x = 13; x < 19; x++) {
+                mapArray[7][x] = 1; // 장애물
+            }
+            for (int x = 33; x < 39; x++) {
+                mapArray[7][x] = 1; // 장애물
+            }
+            for (int x = 13; x < 19; x++) {
+                mapArray[11][x] = 1; // 장애물
+            }
+            for (int x = 33; x < 39; x++) {
+                mapArray[11][x] = 1; // 장애물
+            }
             break;
+
         default:
             break;
     }
@@ -114,8 +144,10 @@ void GameMap::GameOverMap() const {
 };
 
 void GameMap::WaitingMap() const {
+
+    clear();
                                                   
-    mvprintw(height/2, width/2-2, "stage %d", stage);
+    mvprintw(height/2, width/2-2, "stage %d", *stage);
 
     mvprintw(height/2+2, width/2-2, "Press Enterkey");
 
@@ -125,19 +157,15 @@ void GameMap::WaitingMap() const {
 };
 
 void GameMap::nextStage() {
-    if (stage <= 4
-    && missionScore.getNowGrowth() == missionScore.getMissionGrowth()
-    && missionScore.getNowLength() == missionScore.getMissionLength() 
-    && missionScore.getNowPoison()== missionScore.getMissionPoison()
-    // && missionScore.getMissionGates() == (int)getGates()
+    if (*stage <= 4
+    && missionScore.getNowGrowth() >= missionScore.getMissionGrowth()
+    && missionScore.getNowLength() >= missionScore.getMissionLength() 
+    && missionScore.getNowPoison() >= missionScore.getMissionPoison()
+    // && missionScore.getMissionGates() == getGates()
     ){
-        gsuccess = true;
-        lsuccess = true;
-        psuccess = true;
-        Success = true;
-        gatesuccess = true;
-        stage++;
+        (*stage+=1);
 
+        missionScore.MissionList(stage);
         WaitingMap();
 
         int press;
@@ -148,9 +176,14 @@ void GameMap::nextStage() {
                 break;
             }
         }
+        clear();
+        refresh();
+        initMap();
+        printMap();
+        displayState();
+        displayMissions();
+
     }
-    clear();
-    initMap(); // 새로운 스테이지 초기화
 }
 
 void GameMap::printMap() const {
@@ -282,8 +315,7 @@ void GameMap::displayMissions() const {
     }
 
     mvprintw(2, xOffset + 8, "Missions");
-    mvprintw(3, xOffset + 8, "Stage : %d", stage);
-    mvprintw(4, xOffset + 1, " " );
+    mvprintw(3, xOffset + 8, "Stage : %d", *stage);
     mvprintw(5, xOffset + 1, " Growth: %d", missionScore.getMissionGrowth());
     mvprintw(6, xOffset + 1, " Poison: %d", missionScore.getMissionPoison());
     mvprintw(7, xOffset + 1, " Length: %d", missionScore.getMissionLength());
@@ -308,10 +340,11 @@ void GameMap::displayState() const {
         }
     }
     mvprintw(10, xOffset+5, "ScoreBoard");
-    mvprintw(11, xOffset+1, " Growth: %d (%s)", missionScore.getNowGrowth(), gsuccess ? "O" :"X");
-    mvprintw(12, xOffset+1, " Poison: %d (%s)", missionScore.getNowPoison(), psuccess ? "O" :"X");
-    mvprintw(13, xOffset+1, " Length: %d (%s)", missionScore.getNowLength(), lsuccess ? "O" :"X");
+    mvprintw(11, xOffset+1, " Growth: %d", missionScore.getNowGrowth());
+    mvprintw(12, xOffset+1, " Poison: %d", missionScore.getNowPoison());
+    mvprintw(13, xOffset+1, " Length: %d", missionScore.getNowLength());
     // mvprintw(14, xOffset+1, " Gates: %p (%s)", (void*)&gates, gatesuccess ? "O" :"X");
-    mvprintw(14, xOffset+1, " Gates: %d (%s)", missionScore.getNowLength(), "O");
+    mvprintw(14, xOffset+1, " Gates: %d", missionScore.getNowLength());
+
 
 }

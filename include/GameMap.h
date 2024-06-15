@@ -13,7 +13,7 @@ private:
     MissionScore missionScore;
 
 public:
-    GameMap(int width, int height, int stage);
+    GameMap(int width, int height, int* stage);
     ~GameMap();
 
     void TitleMap() const;
@@ -37,18 +37,14 @@ public:
 
     void mGrowth();
 
-    const MissionScore& getMissionScore() const {
-        return missionScore;
-    }
-
-    int stage;
+    int* stage;
 
     void nextStage(); // 다음 스테이지로 이동
-    bool Success = false;
-    bool gsuccess = false;
-    bool psuccess = false;
-    bool lsuccess = false;
-    bool gatesuccess = false;
+    // bool Success = false;
+    // bool gsuccess = false;
+    // bool psuccess = false;
+    // bool lsuccess = false;
+    // bool gatesuccess = false;
 
     int missionGrowth;
     int missionLength;
