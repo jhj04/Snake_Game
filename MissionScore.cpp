@@ -10,28 +10,28 @@ void MissionScore::MissionList(int* stage) {
     // 스테이지에 따라 미션 목표 설정
     switch (*stage) {
         case 1:
-            setMissionLength(4);
-            setMissionGrowth(1);
+            setMissionLength(3);
+            setMissionGrowth(0);
             setMissionPoison(0);
             setMissionGates(1);
             break;
         case 2:
-            setMissionLength(6);
-            setMissionGrowth(2);
-            setMissionPoison(2);
-            setMissionGates(2);
+            setMissionLength(3);
+            setMissionGrowth(1);
+            setMissionPoison(0);
+            setMissionGates(0);
             break;
         case 3:
-            setMissionLength(8);
-            setMissionGrowth(3);
-            setMissionPoison(4);
-            setMissionGates(3);
+            setMissionLength(3);
+            setMissionGrowth(0);
+            setMissionPoison(1);
+            setMissionGates(0);
             break;
         case 4:
-            setMissionLength(10);
-            setMissionGrowth(4);
-            setMissionPoison(5);
-            setMissionGates(3);
+            setMissionLength(4);
+            setMissionGrowth(1);
+            setMissionPoison(1);
+            setMissionGates(1);
             break;
         default:
             break;
