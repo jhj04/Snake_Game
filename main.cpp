@@ -4,6 +4,7 @@
 #include "include/MissionScore.h"
 #include <ncurses.h>
 #include <unistd.h>
+#define DEBUG_MODE
 
 int main() {
     // Ncurses 초기화
@@ -20,6 +21,9 @@ int main() {
         init_pair(2, COLOR_RED, COLOR_BLACK);   // POISON 아이템 (빨간색)
         init_pair(3, COLOR_CYAN, COLOR_BLACK); // RANDOM 아이템 (시안색)
     }
+
+    // 랜덤함수 초기화
+    srand(time(NULL));
 
     // GameMap 객체 생성 및 초기화
     int stage = 1;
@@ -61,15 +65,18 @@ int main() {
     int TimeCount = 0, InputData = -1;
 
     // 게임 루프
-    while (!snake.getGameOver()) {
+    while (!snake.getGameOver() && stage < 5){
+        // 사용자 입력 처리
+        int input = getch();
+        if (input != -1) InputData = input;
+        #ifdef DEBUG_MODE
+            if (InputData == 's') continue;
+        #endif
+
         // 아이템 생성
         if (items.size() < 3) {
             Item::generateItem(map, items, snake); // snake를 추가로 받음
         }
-        
-        // 사용자 입력 처리
-        int input = getch();
-        if (input != -1) InputData = input;
 
         // 아이템 획득 처리
         if (Item::obtainItem(snake, items)) {
@@ -98,7 +105,7 @@ int main() {
 
     }
 
-    // Game Over 애니메이션
+    // 반짝임 애니메이션
     for (int i = 0; i < 5; i++) {
         clear();
         refresh();
@@ -110,22 +117,14 @@ int main() {
         usleep(500000); // 0.5 sec
     }
 
-    // Game Over 메시지 출력
     clear();
-    mvprintw(map.getHeight() / 2, map.getWidth() / 2 - 4, "Game Over");
-    refresh();
-    usleep(5000000); // 5 sec
+    if(stage == 5) map.SuccessMap();
+    else map.GameOverMap();
+    while (getch() != 10) {}
+
     clear();
-
-
-    map.GameOverMap();
-
-    while(true){
-        press = getch();
-        if(press == 10){
-            break;
-        }
-    }
+    map.GameEnd();
+    while (getch() != 10) {}
     
     // Ncurses 종료
     endwin();
