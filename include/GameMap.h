@@ -20,8 +20,10 @@ public:
     void GameOverMap() const;
     void WaitingMap() const;
     void SuccessMap() const;
+    void GameEnd() const;
 
     void initMap();
+    void newMap();
     void printMap() const;
     void createGate();
     int* getGates() const;

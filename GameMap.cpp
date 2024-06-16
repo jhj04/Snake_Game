@@ -1,10 +1,9 @@
 #include "include/GameMap.h"
-#include "include/Item.h"
-#include "include/MissionScore.h"
 #include <iostream>
 #include <stdlib.h>
 #include <time.h> 
 #include <ncurses.h>
+#include <print>
 
 
 GameMap::GameMap(int width, int height, int* stage) : width(width), height(height), stage(stage), missionScore() {
@@ -45,70 +44,57 @@ void GameMap::initMap() {
             }
         }
     }
+}
 
-    switch (*stage) {
-        case 1:
-            for (int y = 5; y < 16; y++) {
-                mapArray[y][24] = 1; // 장애물
-            }
-            for (int y = 5; y < 16; y++) {
-                mapArray[y][25] = 1; // 장애물
-            }
-            break;
-        case 2:
-            for (int y = 5; y < 15; y++) {
-                mapArray[y][24] = 1; // 장애물
-            }
-            for (int y = 5; y < 15; y++) {
-                mapArray[y][25] = 1; // 장애물
-            }
-            for (int x = 10; x < 38; x++) {
-                mapArray[5][x] = 1; // 장애물
-            }
-            for (int x = 10; x < 38; x++) {
-                mapArray[15][x] = 1; // 장애물
-            }
-            break;
-        case 3:
-            for (int y = 3; y < 6; y++) {
-                mapArray[y][10] = 1; // 장애물
-            }
-            for (int y = 9; y < 12; y++) {
-                mapArray[y][20] = 1; // 장애물
-            }
-            for (int y = 16; y < 19; y++) {
-                mapArray[y][30] = 1; // 장애물
-            }
-            break;
-        case 4:
-            for (int y = 13; y < 16; y++) {
-                mapArray[y][24] = 1; // 장애물
-            }
-            for (int y = 13; y < 16; y++) {
-                mapArray[y][25] = 1; // 장애물
-            }
-            for (int y = 3; y < 6; y++) {
-                mapArray[y][24] = 1; // 장애물
-            }
-            for (int y = 3; y < 6; y++) {
-                mapArray[y][25] = 1; // 장애물
-            }
-            for (int x = 13; x < 19; x++) {
-                mapArray[7][x] = 1; // 장애물
-            }
-            for (int x = 33; x < 39; x++) {
-                mapArray[7][x] = 1; // 장애물
-            }
-            for (int x = 13; x < 19; x++) {
-                mapArray[11][x] = 1; // 장애물
-            }
-            for (int x = 33; x < 39; x++) {
-                mapArray[11][x] = 1; // 장애물
-            }
-            break;
+void GameMap::newMap(){
+    createGate();
+    int x1 = gates[0], y1 = gates[1], x2 = gates[2], y2 = gates[3];
 
-        default:
-            break;
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            if (mapArray[y][x] == 3 || mapArray[y][x] == 4) {
+                continue;
+            } else if ((y == y1 && x == x1) || (y == y2 && x == x2)){
+                mapArray[y][x] = 7; //gate
+            } else if ((y == 0 && (x == 0 || x == width - 1)) || (y == height - 1 && (x == 0 || x == width - 1))) {
+                mapArray[y][x] = 2; // 코너
+            } else if (y == 0 || y == height - 1 || x == 0 || x == width - 1) {
+                mapArray[y][x] = 1; // 벽
+            } else {
+                mapArray[y][x] = 0; // 빈공간
+            }
+        }
+    }
+
+    int obstacleCount = 0;
+    while(obstacleCount != *stage * 2){
+        int obstacleWidth = rand() % 4 + 1;
+        int obstacleHeight = rand() % 4 + 1;
+
+        int obstacleX = rand() % (width - obstacleWidth - 2) + 1;
+        int obstacleY = rand() % (height - obstacleHeight - 2) + 1;
+
+        bool isObstacle = false;
+        for (int y = obstacleY - 2; y < obstacleY + obstacleHeight + 2; y++) {
+            for (int x = obstacleX - 2; x < obstacleX + obstacleWidth + 2; x++) {
+                if((x >= 0 && x < width && y >= 0 && y < height) && mapArray[y][x] != 0) {
+                    isObstacle = true;
+                    break;
+                }
+            }
+            if (isObstacle) {
+                break;
+            }
+        }
+        if(isObstacle) continue;
+
+        // 장애물 그리기
+        for (int y = obstacleY; y < obstacleY + obstacleHeight; y++) {
+            for (int x = obstacleX; x < obstacleX + obstacleWidth; x++) {
+                mapArray[y][x] = 1;
+            }
+        }
+        obstacleCount++;
     }
 }
 
@@ -125,18 +111,26 @@ void GameMap::TitleMap() const {
 
 // GameOverMap 함수
 void GameMap::GameOverMap() const {
+    mvwprintw(stdscr, height / 2 - 3, (width - 44)/2, "  ____    _    __  __ _____    _____     _______ ____  ");
+    mvwprintw(stdscr, height / 2 - 2, (width - 44)/2, " / ___|  / \\  |  \\/  | ____|  / _ \\ \\   / / ____|  _ \\ ");
+    mvwprintw(stdscr, height / 2 - 1, (width - 44)/2, "| |  _  / _ \\ | |\\/| |  _|   | | | \\ \\ / /|  _| | |_) |");
+    mvwprintw(stdscr, height / 2,     (width - 44)/2, "| |_| |/ ___ \\| |  | | |___  | |_| |\\ V / | |___|  _ < ");
+    mvwprintw(stdscr, height / 2 + 1, (width - 44)/2, " \\____/_/   \\_\\_|  |_|_____|  \\___/  \\_/  |_____|_| \\_\\");
+
+    refresh();
+}
+
+void GameMap::GameEnd() const {
     mvwprintw(stdscr, 0, width/2-2, "                          __                 ");
     mvwprintw(stdscr, 1, width/2-2, "   _____________   ____ _/ /_____   __________");
     mvwprintw(stdscr, 2, width/2-2, "  / ___/ ___/ _ \\/ __ `/ __/ __ \\ / ___/ ___/");
     mvwprintw(stdscr, 3, width/2-2, " / /__/ /  /  __/ /_/ / /_/ /_/ / /  (__  ) ");
-    mvwprintw(stdscr, 4, width/2-2, " \\___/_/  \\___/\\__,_/\\__/\\____/_/  /____/  ");    
+    mvwprintw(stdscr, 4, width/2-2, " \\___/_/  \\___/\\__,_/\\__/\\____/_/  /____/  ");
 
     mvprintw(7, width/2+3, "JeongHyunjoo[jhj04]");
     mvprintw(8, width/2+3, "KimSehyun[SeHyun-Kim04]");
     mvprintw(9, width/2+3, "Choahyoung[twnbay]");
     mvprintw(10, width/2+3, "CzorapinskaWeronika[seennothing]");
-
-    refresh();
 }
 
 // WaitingMap 함수
@@ -150,15 +144,14 @@ void GameMap::WaitingMap() const {
 }
 
 void GameMap::SuccessMap() const {
-                                                  
-    mvwprintw(stdscr, 0, width/2-2, "  __     _  _        _               _____                       _      _         _ _ ");
-    mvwprintw(stdscr, 1, width/2-2, " | \\   //|(_)      (_)             / ____|                     | |    | |       | | |");
-    mvwprintw(stdscr, 2, width/2-2, " | \\  // |_ ___ ___ _  ___  _ __   | |     ___  _ __ ___  _ __ | | ___| |_ ___  | | |");
-    mvwprintw(stdscr, 3, width/2-2, " | |\\//| | / __/ __| |/ _\\| '_ \\ | |    / _\\| '_ ` _\\| '_\\| |/ _\\ __/ _\\ | | |");
-    mvwprintw(stdscr, 4, width/2-2, " | |    | | \\_ \\_\\ | (_) | | | | | |___| (_) | | | | | | |_) | |  __/ ||  __/ |_|_|");                                 
-    mvwprintw(stdscr, 4, width/2-2, " |_|    |_|_|___/___/_|\\__/|_| |_| \\_____\\__/|_| |_| |_| .__/|_|\\__|\\_\\__| (_|_)");                                 
-    mvwprintw(stdscr, 4, width/2-2, "                                                        | |                         ");                                 
-    mvwprintw(stdscr, 4, width/2-2, "                                                        |_|                         ");                                 
+    mvwprintw(stdscr, 0, width/2-10, "  __     _  _        _               _____                       _      _         _ _ ");
+    mvwprintw(stdscr, 1, width/2-10, " | \\   //|(_)      (_)             / ____|                     | |    | |       | | |");
+    mvwprintw(stdscr, 2, width/2-10, " | \\  // |_ ___ ___ _  ___  _ __   | |     ___  _ __ ___  _ __ | | ___| |_ ___  | | |");
+    mvwprintw(stdscr, 3, width/2-10, " | |\\//| | / __/ __| |/ _\\| '_ \\ | |    / _\\| '_ ` _\\| '_\\| |/ _\\ __/ _\\ | | |");
+    mvwprintw(stdscr, 4, width/2-10, " | |    | | \\_ \\_\\ | (_) | | | | | |___| (_) | | | | | | |_) | |  __/ ||  __/ |_|_|");
+    mvwprintw(stdscr, 5, width/2-10, " |_|    |_|_|___/___/_|\\__/|_| |_| \\_____\\__/|_| |_| |_| .__/|_|\\__|\\_\\__| (_|_)");
+    mvwprintw(stdscr, 6, width/2-10, "                                                        | |                         ");
+    mvwprintw(stdscr, 7, width/2-10, "                                                        |_|                         ");
 
     mvprintw(7, width/2+3, "JeongHyunjoo[jhj04]");
     mvprintw(8, width/2+3, "KimSehyun[SeHyun-Kim04]");
@@ -190,9 +183,10 @@ void GameMap::nextStage() {
     && missionScore.getNowGrowth() >= missionScore.getMissionGrowth()
     && missionScore.getNowLength() >= missionScore.getMissionLength() 
     && missionScore.getNowPoison() >= missionScore.getMissionPoison()
-    && missionScore.getNowGates() == missionScore.getMissionGates()
+    && missionScore.getNowGates() >= missionScore.getMissionGates()
     ){
         (*stage+=1);
+        if(*stage == 5) return;
 
         missionScore.MissionList(stage);
         WaitingMap();
@@ -207,11 +201,22 @@ void GameMap::nextStage() {
         }
         clear();
         refresh();
-        initMap();
+        newMap();
         printMap();
         displayState();
         displayMissions();
         isComplete();
+
+        for (int i = 0; i < 3; i++) {
+            clear();
+            refresh();
+            usleep(300000); // 0.5 sec
+            printMap();
+            displayState();
+            displayMissions();
+            refresh();
+            usleep(500000); // 0.5 sec
+        }
 
         growthComplete = 0;
         lengthComplete = 0;
