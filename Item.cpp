@@ -22,12 +22,6 @@ int Item::getTimestamp() const {
 }
 
 void Item::generateItem(GameMap& map, std::vector<Item>& items, Snake& snake) {
-    // srand가 한 번만 실행되도록 수정
-    static bool isSeeded = false;
-    if (!isSeeded) {
-        srand(time(NULL));
-        isSeeded = true;
-    }
     int x, y;
     if (items.size() < 3) {
         // 벽을 제외한 공간을 랜덤 지정
