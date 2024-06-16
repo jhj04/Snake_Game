@@ -1,1 +1,0 @@
-/usr/bin/c++ -lncurses CMakeFiles/Kookmin_Univ_Cpp_Project.dir/main.cpp.o CMakeFiles/Kookmin_Univ_Cpp_Project.dir/GameMap.cpp.o CMakeFiles/Kookmin_Univ_Cpp_Project.dir/Snake.cpp.o CMakeFiles/Kookmin_Univ_Cpp_Project.dir/Item.cpp.o CMakeFiles/Kookmin_Univ_Cpp_Project.dir/MissionScore.cpp.o -o Kookmin_Univ_Cpp_Project  -lcurses /usr/lib/x86_64-linux-gnu/libform.so

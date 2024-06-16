@@ -1,3 +1,0 @@
-/home/user/Snake_Game/CMakeFiles/Kookmin_Univ_Cpp_Project.dir
-/home/user/Snake_Game/CMakeFiles/edit_cache.dir
-/home/user/Snake_Game/CMakeFiles/rebuild_cache.dir

@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <time.h> 
 #include <ncurses.h>
-#include <print>
 
 
 GameMap::GameMap(int width, int height, int* stage) : width(width), height(height), stage(stage), missionScore() {
@@ -210,12 +209,12 @@ void GameMap::nextStage() {
         for (int i = 0; i < 3; i++) {
             clear();
             refresh();
-            usleep(300000); // 0.5 sec
+            // usleep(300000); // 0.5 sec
             printMap();
             displayState();
             displayMissions();
             refresh();
-            usleep(500000); // 0.5 sec
+            // usleep(500000); // 0.5 sec
         }
 
         growthComplete = 0;

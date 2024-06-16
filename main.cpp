@@ -4,6 +4,8 @@
 #include "include/MissionScore.h"
 #include <ncurses.h>
 #include <unistd.h>
+#include <cstdlib>
+#include <ctime>    
 #define DEBUG_MODE
 
 int main() {
