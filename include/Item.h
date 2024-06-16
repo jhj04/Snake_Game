@@ -17,11 +17,11 @@ private:
 public:
     Item(int x, int y, int type);
 
-    static void generateItem(GameMap& map, std::vector<Item>& items); // 아이템을 맵에 생성하는 함수
+    static void generateItem(GameMap& map, std::vector<Item>& items, Snake& snake); // 아이템을 맵에 생성하는 함수
     static bool obtainItem(const Snake& snake, const std::vector<Item>& items); // 아이템 획득 여부 확인 함수
     static void itemEffect(GameMap& map, Snake& snake, std::vector<Item>& items); // 아이템의 효과를 구현하는 함수
     static void removeItem(GameMap& map,std::vector<Item>& items, const Snake& snake, int lifetime); // 유효시간이 지나거나, 획득한 아이템을 지우는 함수
-
+    
     // 아이템 위치, 타입, 생성시간 getter
     int getX() const;
     int getY() const;

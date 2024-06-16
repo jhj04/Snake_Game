@@ -21,20 +21,19 @@ int Item::getTimestamp() const {
     return timestamp;
 }
 
-void Item::generateItem(GameMap& map, std::vector<Item>& items) {
-    srand(time(NULL));
+void Item::generateItem(GameMap& map, std::vector<Item>& items, Snake& snake) {
     int x, y;
     if (items.size() < 3) {
         // 벽을 제외한 공간을 랜덤 지정
-        x = rand() % (map.getWidth() - 2) + 1; 
+        x = rand() % (map.getWidth() - 2) + 1;
         y = rand() % (map.getHeight() - 2) + 1;
 
-        // 해당 위치가 빈 공간인 경우, 그 위치에 아이템 추가
-        if (map.getMap(x, y) == 0) {
+        // 해당 위치가 빈 공간이며 뱀의 근처 위치가 아닐 경우, 그 위치에 아이템 추가
+        if (snake.isWithinRange(x, y, snake) || map.getMap(x, y) == 0) {
             // GROWTH = 0, POISON = 1, RANDOM = 2
             int type = rand() % 3;
             // 벡터에 새로 만들 아이템 추가
-            items.emplace_back(x, y, type); 
+            items.emplace_back(x, y, type);
             // printMap 작동을 위해 GROWTH일 경우 5로, POISON일 경우 6으로 인자를 넘김
             switch (type) {
                 case GROWTH: map.setMap(x, y, 5); break;
@@ -69,10 +68,12 @@ void Item::itemEffect(GameMap& map, Snake& snake, std::vector<Item>& items) {
                 case GROWTH:
                     snake.grow();
                     map.incrementGrowth();
+                    map.incrementLength(5);
                     break;
                 case POISON:
                     snake.shrink();
                     map.incrementPoison();
+                    map.incrementLength(6);
                     break;
                 case RANDOM: // 랜덤으로 길이가 증가하거나 감소
                     if (rand() % 2 == 0) {
