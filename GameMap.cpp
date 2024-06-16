@@ -112,27 +112,53 @@ void GameMap::initMap() {
     }
 }
 
+// TitleMap 함수
 void GameMap::TitleMap() const {
-                
     mvwprintw(stdscr, 0, width/2, " _____         _          _____   ");
     mvwprintw(stdscr, 1, width/2, "|   __|___ ___| |_ ___   |   __|___ _____ ___ ");
     mvwprintw(stdscr, 2, width/2, "|__   |   | .'| '_| -_|  |  |  | .'|     | -_|");
     mvwprintw(stdscr, 3, width/2, "|_____|_|_|__,|_,_|___|  |_____|__,|_|_|_|___|");
 
     mvwprintw(stdscr, 7, width/2+6, "<Press Enterkey to Start Game>");
+    refresh();
+}
+
+// GameOverMap 함수
+void GameMap::GameOverMap() const {
+    mvwprintw(stdscr, 0, width/2-2, "                          __                 ");
+    mvwprintw(stdscr, 1, width/2-2, "   _____________   ____ _/ /_____   __________");
+    mvwprintw(stdscr, 2, width/2-2, "  / ___/ ___/ _ \\/ __ `/ __/ __ \\ / ___/ ___/");
+    mvwprintw(stdscr, 3, width/2-2, " / /__/ /  /  __/ /_/ / /_/ /_/ / /  (__  ) ");
+    mvwprintw(stdscr, 4, width/2-2, " \\___/_/  \\___/\\__,_/\\__/\\____/_/  /____/  ");    
+
+    mvprintw(7, width/2+3, "JeongHyunjoo[jhj04]");
+    mvprintw(8, width/2+3, "KimSehyun[SeHyun-Kim04]");
+    mvprintw(9, width/2+3, "Choahyoung[twnbay]");
+    mvprintw(10, width/2+3, "CzorapinskaWeronika[seennothing]");
 
     refresh();
-                                            
-};
+}
 
-void GameMap::GameOverMap() const {
+// WaitingMap 함수
+void GameMap::WaitingMap() const {
+
+    clear();
+    mvprintw(height/2, width/2-2, "stage %d", *stage);
+    mvprintw(height/2+2, width/2-2, "Press Enterkey");
+
+    refresh();
+}
+
+void GameMap::SuccessMap() const {
                                                   
-    mvwprintw(stdscr, 0, width/2-2, " _____             _               ");
-    mvwprintw(stdscr, 1, width/2-2, "|     |___ ___ ___| |_ ___ ___ ___ ");
-    mvwprintw(stdscr, 2, width/2-2, "|   --|  _| -_| .'|  _| . |  _|_ -|");
-    mvwprintw(stdscr, 3, width/2-2, "|_____|_| |___|__,|_| |___|_| |___|");
-
-                                   
+    mvwprintw(stdscr, 0, width/2-2, "  __     _  _        _               _____                       _      _         _ _ ");
+    mvwprintw(stdscr, 1, width/2-2, " | \\   //|(_)      (_)             / ____|                     | |    | |       | | |");
+    mvwprintw(stdscr, 2, width/2-2, " | \\  // |_ ___ ___ _  ___  _ __   | |     ___  _ __ ___  _ __ | | ___| |_ ___  | | |");
+    mvwprintw(stdscr, 3, width/2-2, " | |\\//| | / __/ __| |/ _\\| '_ \\ | |    / _\\| '_ ` _\\| '_\\| |/ _\\ __/ _\\ | | |");
+    mvwprintw(stdscr, 4, width/2-2, " | |    | | \\_ \\_\\ | (_) | | | | | |___| (_) | | | | | | |_) | |  __/ ||  __/ |_|_|");                                 
+    mvwprintw(stdscr, 4, width/2-2, " |_|    |_|_|___/___/_|\\__/|_| |_| \\_____\\__/|_| |_| |_| .__/|_|\\__|\\_\\__| (_|_)");                                 
+    mvwprintw(stdscr, 4, width/2-2, "                                                        | |                         ");                                 
+    mvwprintw(stdscr, 4, width/2-2, "                                                        |_|                         ");                                 
 
     mvprintw(7, width/2+3, "JeongHyunjoo[jhj04]");
     mvprintw(8, width/2+3, "KimSehyun[SeHyun-Kim04]");
@@ -143,25 +169,28 @@ void GameMap::GameOverMap() const {
                                             
 };
 
-void GameMap::WaitingMap() const {
+void GameMap::isComplete() {
+    if(missionScore.getNowGrowth() >= missionScore.getMissionGrowth()){
+        growthComplete += 1;
+    }
+    if(missionScore.getNowLength() >= missionScore.getMissionLength()){
+        lengthComplete += 1;
+    } 
+    if(missionScore.getNowPoison() >= missionScore.getMissionPoison()){
+        poisonComplete += 1;
+    }
+    if(missionScore.getNowGates() >= missionScore.getMissionGates()){
+        gateComplete += 1;
+    }
+}
 
-    clear();
-                                                  
-    mvprintw(height/2, width/2-2, "stage %d", *stage);
-
-    mvprintw(height/2+2, width/2-2, "Press Enterkey");
-
-
-    refresh();
-                                            
-};
 
 void GameMap::nextStage() {
     if (*stage <= 4
     && missionScore.getNowGrowth() >= missionScore.getMissionGrowth()
     && missionScore.getNowLength() >= missionScore.getMissionLength() 
     && missionScore.getNowPoison() >= missionScore.getMissionPoison()
-    // && missionScore.getMissionGates() == getGates()
+    && missionScore.getNowGates() == missionScore.getMissionGates()
     ){
         (*stage+=1);
 
@@ -182,7 +211,12 @@ void GameMap::nextStage() {
         printMap();
         displayState();
         displayMissions();
+        isComplete();
 
+        growthComplete = 0;
+        lengthComplete = 0;
+        poisonComplete = 0;
+        gateComplete = 0;
     }
 }
 
@@ -297,6 +331,10 @@ void GameMap::incrementLength(int itemType) {
         break;
     }
 }
+
+void GameMap::incrementGates() {
+    missionScore.setNowGates(missionScore.getNowGates() + 1);
+}
 void GameMap::displayMissions() const {
     int xOffset = width + 4;
     int missionMapWidth = 20;
@@ -340,11 +378,11 @@ void GameMap::displayState() const {
         }
     }
     mvprintw(10, xOffset+5, "ScoreBoard");
-    mvprintw(11, xOffset+1, " Growth: %d", missionScore.getNowGrowth());
-    mvprintw(12, xOffset+1, " Poison: %d", missionScore.getNowPoison());
-    mvprintw(13, xOffset+1, " Length: %d", missionScore.getNowLength());
-    // mvprintw(14, xOffset+1, " Gates: %p (%s)", (void*)&gates, gatesuccess ? "O" :"X");
-    mvprintw(14, xOffset+1, " Gates: %d", missionScore.getNowLength());
+    mvprintw(11, xOffset+1, " Growth: %d (%d)", missionScore.getNowGrowth(), growthComplete);
+    mvprintw(12, xOffset+1, " Poison: %d (%d)", missionScore.getNowPoison(), poisonComplete);
+    mvprintw(13, xOffset+1, " Length: %d (%d)", missionScore.getNowLength(), lengthComplete);
+    mvprintw(14, xOffset+1, " Gates: %d (%d)", missionScore.getNowGates(), gateComplete);
 
+    refresh();
 
 }

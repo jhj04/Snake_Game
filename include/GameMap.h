@@ -19,32 +19,35 @@ public:
     void TitleMap() const;
     void GameOverMap() const;
     void WaitingMap() const;
+    void SuccessMap() const;
 
     void initMap();
     void printMap() const;
     void createGate();
     int* getGates() const;
+    int getNowGates() const; //현재 게이트 불러오기
     int getWidth() const;
     int getHeight() const;
     int getMap(int x, int y) const;
     void setMap(int x, int y, int item);
-    void displayState() const;
-    void displayMissions() const;
+    void displayState() const; //현재 스코어 상태 출력
+    void displayMissions() const; // 현재 스테이지의 미션보드 출력
 
-    void incrementGrowth();
-    void incrementPoison();
-    void incrementLength(int itemType);
+    void incrementGrowth(); // 아이템 획득에 따른 growth +1
+    void incrementPoison(); // 아이템 획득에 따른 poison +1
+    void incrementLength(int itemType); // 아이템 획득에 따른 length +-1
+    void incrementGates(); // 게이트 통과에 따른 gate +1
 
     void mGrowth();
 
     int* stage;
 
     void nextStage(); // 다음 스테이지로 이동
-    // bool Success = false;
-    // bool gsuccess = false;
-    // bool psuccess = false;
-    // bool lsuccess = false;
-    // bool gatesuccess = false;
+    void isComplete();
+    int growthComplete = 0;
+    int poisonComplete = 0;
+    int lengthComplete = 0;
+    int gateComplete = 0;
 
     int missionGrowth;
     int missionLength;
@@ -52,4 +55,4 @@ public:
 
 };
 
-#endif 
+#endif
